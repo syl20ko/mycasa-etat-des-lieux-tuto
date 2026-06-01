@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>My Casa — Module État des Lieux</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary: #2563eb;
+            --primary-light: #dbeafe;
+            --success: #16a34a;
+            --success-light: #dcfce7;
+            --danger: #dc2626;
+            --danger-light: #fee2e2;
+            --warning: #f59e0b;
+            --warning-light: #fef3c7;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+            --radius: 12px;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: var(--gray-800);
+            background: var(--gray-50);
+            line-height: 1.6;
+        }
+
+        /* Hero */
+        .hero {
+            background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%);
+            color: white;
+            padding: 80px 24px 60px;
+            text-align: center;
+        }
+        .hero-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.15);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 20px;
+            letter-spacing: 0.5px;
+        }
+        .hero h1 {
+            font-size: clamp(28px, 5vw, 42px);
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+        .hero p {
+            font-size: 18px;
+            opacity: 0.85;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Container */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Section */
+        .section {
+            padding: 60px 0;
+        }
+        .section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        .section h2 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+        .section .lead {
+            font-size: 16px;
+            color: var(--gray-500);
+            margin-bottom: 32px;
+        }
+
+        /* Stats bar */
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            padding: 40px 24px;
+            background: white;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        .stat-card {
+            text-align: center;
+            padding: 16px;
+        }
+        .stat-number {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        .stat-label {
+            font-size: 14px;
+            color: var(--gray-500);
+            margin-top: 4px;
+        }
+
+        /* Feature cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        @media (max-width: 640px) {
+            .feature-grid { grid-template-columns: 1fr; }
+        }
+        .feature-card {
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius);
+            padding: 24px;
+            transition: box-shadow 0.2s;
+        }
+        .feature-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        .feature-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            margin-bottom: 14px;
+        }
+        .feature-card h3 {
+            font-size: 17px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .feature-card p {
+            font-size: 14px;
+            color: var(--gray-500);
+            line-height: 1.5;
+        }
+
+        /* Mockup screens */
+        .mockup-section {
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius);
+            overflow: hidden;
+            margin-bottom: 32px;
+        }
+        .mockup-header {
+            background: var(--gray-100);
+            padding: 12px 20px;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .mockup-dot {
+            width: 10px; height: 10px; border-radius: 50%;
+        }
+        .mockup-dot.red { background: #ef4444; }
+        .mockup-dot.yellow { background: #f59e0b; }
+        .mockup-dot.green { background: #22c55e; }
+        .mockup-url {
+            background: white;
+            border-radius: 6px;
+            padding: 4px 12px;
+            font-size: 12px;
+            color: var(--gray-400);
+            margin-left: 8px;
+            flex: 1;
+        }
+        .mockup-body {
+            padding: 20px;
+        }
+
+        /* Accordion mockup */
+        .mock-accordion {
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .mock-acc-header {
+            padding: 12px 16px;
+            background: var(--gray-50);
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .mock-acc-body {
+            padding: 8px;
+        }
+        .mock-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            margin-bottom: 4px;
+            background: white;
+            border: 1px solid var(--gray-100);
+        }
+        .mock-photo {
+            width: 40px; height: 40px;
+            border-radius: 6px;
+            background: var(--gray-200);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px; color: var(--gray-400);
+        }
+        .mock-item-info { flex: 1; }
+        .mock-item-label { font-size: 13px; font-weight: 500; }
+        .mock-item-qty { font-size: 11px; color: var(--gray-400); }
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .badge-success { background: var(--success-light); color: var(--success); }
+        .badge-danger { background: var(--danger-light); color: var(--danger); }
+        .badge-warning { background: var(--warning-light); color: #92400e; }
+        .badge-secondary { background: var(--gray-100); color: var(--gray-500); }
+        .badge-info { background: var(--primary-light); color: var(--primary); }
+
+        /* Wizard mockup */
+        .wizard-mock {
+            max-width: 380px;
+            margin: 0 auto;
+            border: 2px solid var(--gray-200);
+            border-radius: 20px;
+            overflow: hidden;
+            background: white;
+        }
+        .wizard-topbar {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+        }
+        .wizard-progress {
+            height: 4px;
+            background: var(--gray-200);
+        }
+        .wizard-progress-fill {
+            height: 100%;
+            background: var(--primary);
+            width: 35%;
+            transition: width 0.3s;
+        }
+        .wizard-photo-zone {
+            height: 180px;
+            background: var(--gray-100);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 16px;
+            border-radius: 12px;
+            color: var(--gray-400);
+            font-size: 14px;
+        }
+        .wizard-content {
+            padding: 0 16px 16px;
+        }
+        .wizard-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+        }
+        .wizard-buttons .btn {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            text-align: center;
+        }
+        .btn-primary-mock { background: var(--primary); color: white; }
+        .btn-outline-mock { background: white; color: var(--gray-600); border: 1px solid var(--gray-300); }
+        .condition-btns {
+            display: flex;
+            gap: 8px;
+            margin: 12px 0;
+        }
+        .condition-btn {
+            flex: 1;
+            padding: 10px 0;
+            border-radius: 8px;
+            border: none;
+            font-size: 13px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        /* Table mockup */
+        .mock-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        .mock-table th {
+            background: var(--gray-50);
+            padding: 10px 12px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid var(--gray-200);
+            font-size: 12px;
+            color: var(--gray-500);
+        }
+        .mock-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--gray-100);
+        }
+        .mock-table .text-center { text-align: center; }
+        .mock-table .text-danger { color: var(--danger); font-weight: 600; }
+        .mock-table .text-success { color: var(--success); }
+        .mock-table .text-muted { color: var(--gray-400); }
+
+        /* Report mockup */
+        .score-bar {
+            height: 10px;
+            background: var(--gray-200);
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 8px 0 20px;
+        }
+        .score-fill {
+            height: 100%;
+            border-radius: 5px;
+            background: linear-gradient(90deg, var(--danger), var(--warning), var(--success));
+        }
+
+        /* Flow */
+        .flow-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+        .flow-step {
+            display: flex;
+            gap: 16px;
+            padding: 20px 0;
+        }
+        .flow-num {
+            width: 36px;
+            height: 36px;
+            min-width: 36px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 15px;
+        }
+        .flow-step h4 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .flow-step p {
+            font-size: 14px;
+            color: var(--gray-500);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 40px 24px;
+            color: var(--gray-400);
+            font-size: 13px;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        /* Separator */
+        .sep {
+            border: none;
+            border-top: 1px solid var(--gray-200);
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Hero -->
+<div class="hero">
+    <div class="hero-badge">NOUVELLE FONCTIONNALITÉ</div>
+    <h1>Module État des Lieux</h1>
+    <p>Un inventaire vivant de chaque appartement — matériel, état, photos — accessible en temps réel depuis le manager.</p>
+</div>
+
+<!-- Stats -->
+<div class="stats-bar">
+    <div class="stat-card">
+        <div class="stat-number">133</div>
+        <div class="stat-label">Appartements couverts</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number">84</div>
+        <div class="stat-label">Types d'items suivis</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number">9</div>
+        <div class="stat-label">Catégories</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number">11 172</div>
+        <div class="stat-label">Points de contrôle</div>
+    </div>
+</div>
+
+<!-- Fonctionnalités principales -->
+<div class="section">
+    <div class="container">
+        <div class="section-title">Fonctionnalités</div>
+        <h2>Tout ce que le module fait</h2>
+        <p class="lead">8 fonctionnalités pensées pour le terrain, la direction et les propriétaires.</p>
+
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="feature-icon" style="background: var(--primary-light);">📋</div>
+                <h3>Inventaire par appartement</h3>
+                <p>83 items répartis en 9 catégories (cuisine, électroménager, literie...), chacun avec une photo et un état.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon" style="background: var(--success-light);">⚡</div>
+                <h3>Inspection rapide</h3>
+                <p>Wizard mobile step-by-step : parcourez les items un par un, changez l'état en un tap, prenez une photo directement.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon" style="background: var(--danger-light);">📊</div>
+                <h3>Vue transversale</h3>
+                <p>Tableau de bord cross-appart : voyez d'un coup d'oeil combien de micro-ondes sont à changer sur tout le parc.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon" style="background: var(--warning-light);">🛒</div>
+                <h3>Liste d'achat</h3>
+                <p>Générée automatiquement depuis les items "à changer". Groupée par type, avec modèle aspirateur affiché.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon" style="background: #f3e8ff;">👤</div>
+                <h3>Rapport propriétaire</h3>
+                <p>Page web partageable (lien unique, pas de login) montrant l'état du matériel avec photos et score global.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon" style="background: #ecfdf5;">🏠</div>
+                <h3>Onboarding nouveau proprio</h3>
+                <p>Checklist des items manquants à fournir avant mise en location. Exclut automatiquement les items My Casa.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon" style="background: #fef3c7;">⚙️</div>
+                <h3>Configuration batch</h3>
+                <p>Renseigner salles de bain et espaces extérieurs pour les 133 apparts en une seule page.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon" style="background: #e0e7ff;">📷</div>
+                <h3>Photos par item</h3>
+                <p>Upload photo direct depuis le terrain. Caméra du téléphone ouverte automatiquement. Preuve visuelle pour les proprios.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr class="sep">
+
+<!-- Écran 1 : Liste des appartements -->
+<div class="section">
+    <div class="container">
+        <div class="section-title">Écran 1</div>
+        <h2>Liste des appartements</h2>
+        <p class="lead">Vue d'ensemble avec badges colorés : rouge = items à changer, jaune = non inspecté, vert = tout OK.</p>
+
+        <div class="mockup-section">
+            <div class="mockup-header">
+                <div class="mockup-dot red"></div>
+                <div class="mockup-dot yellow"></div>
+                <div class="mockup-dot green"></div>
+                <span class="mockup-url">manager-my-casa.fr/inventory</span>
+            </div>
+            <div class="mockup-body">
+                <h4 style="margin-bottom:16px; font-size: 18px;">État des lieux — Par appartement</h4>
+                <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:10px;">
+                    <div style="border:2px solid var(--danger); border-radius:8px; padding:12px;">
+                        <div style="font-weight:600; font-size:14px;">BONAPARTE 11</div>
+                        <div style="font-size:12px; color:var(--gray-400);">4 pers.</div>
+                        <div style="margin-top:6px;"><span class="badge badge-danger">3 à changer</span></div>
+                    </div>
+                    <div style="border:2px solid var(--success); border-radius:8px; padding:12px;">
+                        <div style="font-weight:600; font-size:14px;">BUFFA 21</div>
+                        <div style="font-size:12px; color:var(--gray-400);">2 pers.</div>
+                        <div style="margin-top:6px;"><span class="badge badge-success">Tout OK</span></div>
+                    </div>
+                    <div style="border:2px solid var(--gray-300); border-radius:8px; padding:12px;">
+                        <div style="font-weight:600; font-size:14px;">CIVETTE 41</div>
+                        <div style="font-size:12px; color:var(--gray-400);">5 pers.</div>
+                        <div style="margin-top:6px;"><span class="badge badge-secondary">Non inspecté</span></div>
+                    </div>
+                    <div style="border:2px solid var(--success); border-radius:8px; padding:12px;">
+                        <div style="font-weight:600; font-size:14px;">DIJON G</div>
+                        <div style="font-size:12px; color:var(--gray-400);">3 pers.</div>
+                        <div style="margin-top:6px;"><span class="badge badge-warning">12 non inspectés</span></div>
+                    </div>
+                    <div style="border:2px solid var(--danger); border-radius:8px; padding:12px;">
+                        <div style="font-weight:600; font-size:14px;">FRANCE 82</div>
+                        <div style="font-size:12px; color:var(--gray-400);">2 pers.</div>
+                        <div style="margin-top:6px;"><span class="badge badge-danger">5 à changer</span></div>
+                    </div>
+                    <div style="border:2px solid var(--success); border-radius:8px; padding:12px;">
+                        <div style="font-weight:600; font-size:14px;">MASSENA 33</div>
+                        <div style="font-size:12px; color:var(--gray-400);">4 pers.</div>
+                        <div style="margin-top:6px;"><span class="badge badge-success">Tout OK</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr class="sep">
+
+<!-- Écran 2 : Vue appartement -->
+<div class="section" style="background: white;">
+    <div class="container">
+        <div class="section-title">Écran 2</div>
+        <h2>Vue détail appartement</h2>
+        <p class="lead">Accordéon par catégorie. Chaque item montre sa photo, sa quantité et son état. Tap pour modifier.</p>
+
+        <div class="mockup-section">
+            <div class="mockup-header">
+                <div class="mockup-dot red"></div>
+                <div class="mockup-dot yellow"></div>
+                <div class="mockup-dot green"></div>
+                <span class="mockup-url">manager-my-casa.fr/inventory/47</span>
+            </div>
+            <div class="mockup-body">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                    <div>
+                        <div style="font-size:12px; color:var(--gray-400);">← Retour</div>
+                        <h4 style="font-size:18px;">BONAPARTE 11</h4>
+                        <div style="font-size:12px; color:var(--gray-400);">4 pers. · 1 sdb · Extérieur</div>
+                    </div>
+                    <div class="btn btn-primary-mock" style="padding:8px 14px; border-radius:8px; font-size:13px;">Inspection rapide</div>
+                </div>
+                <div class="mock-accordion">
+                    <div class="mock-acc-header">
+                        Cuisine
+                        <span style="font-size:12px; color:var(--gray-400);">20 OK <span style="color:var(--danger);">· 2 à changer</span></span>
+                    </div>
+                    <div class="mock-acc-body">
+                        <div class="mock-item">
+                            <div class="mock-photo">🍽</div>
+                            <div class="mock-item-info">
+                                <div class="mock-item-label">Verres à eau</div>
+                                <div class="mock-item-qty">Qty: 6/8</div>
+                            </div>
+                            <span class="badge badge-danger">A CHANGER</span>
+                        </div>
+                        <div class="mock-item">
+                            <div class="mock-photo">☕</div>
+                            <div class="mock-item-info">
+                                <div class="mock-item-label">Machine à café Nespresso</div>
+                                <div class="mock-item-qty">Qty: 1/1</div>
+                            </div>
+                            <span class="badge badge-success">BON</span>
+                        </div>
+                        <div class="mock-item">
+                            <div class="mock-photo">🔪</div>
+                            <div class="mock-item-info">
+                                <div class="mock-item-label">Couteaux de cuisine</div>
+                                <div class="mock-item-qty">Qty: 1/1</div>
+                            </div>
+                            <span class="badge badge-info">NEUF</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="mock-accordion" style="margin-top:8px;">
+                    <div class="mock-acc-header">
+                        Électroménager
+                        <span style="font-size:12px; color:var(--gray-400);">12 OK · 1 à changer</span>
+                    </div>
+                </div>
+                <div class="mock-accordion" style="margin-top:8px;">
+                    <div class="mock-acc-header">
+                        Salle de Bain
+                        <span style="font-size:12px; color:var(--gray-400);">9 OK</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr class="sep">
+
+<!-- Écran 3 : Wizard inspection -->
+<div class="section">
+    <div class="container">
+        <div class="section-title">Écran 3</div>
+        <h2>Inspection rapide (mobile)</h2>
+        <p class="lead">Parcourez chaque item un par un. Photo, état, quantité — en 2 taps par item. Optimisé pour le terrain.</p>
+
+        <div style="display:flex; justify-content:center;">
+            <div class="wizard-mock">
+                <div class="wizard-topbar">
+                    <div><strong>BONAPARTE 11</strong> <span style="color:var(--gray-400); font-size:12px; margin-left:6px;">Cuisine</span></div>
+                    <a style="color:var(--gray-400); font-size:12px; text-decoration:none;">Quitter</a>
+                </div>
+                <div class="wizard-progress"><div class="wizard-progress-fill"></div></div>
+                <div style="font-size:12px; color:var(--gray-400); padding:8px 16px 0;">12 / 84</div>
+                <div class="wizard-photo-zone">
+                    Tap pour prendre une photo
+                </div>
+                <div class="wizard-content">
+                    <h3 style="font-size:16px; margin-bottom:2px;">Poêles et casseroles</h3>
+                    <p style="color:var(--gray-400); font-size:13px; margin-bottom:12px;">Attendu : 3</p>
+
+                    <div style="margin-bottom:12px;">
+                        <label style="font-size:12px; color:var(--gray-500);">Quantité observée</label>
+                        <input type="number" value="3" style="width:60px; padding:6px 8px; border:1px solid var(--gray-300); border-radius:6px; margin-left:8px; font-size:14px;">
+                    </div>
+
+                    <div class="condition-btns">
+                        <div class="condition-btn" style="background:var(--gray-200); color:var(--gray-600);">Neuf</div>
+                        <div class="condition-btn" style="background:var(--success); color:white;">Bon</div>
+                        <div class="condition-btn" style="background:var(--gray-200); color:var(--gray-600);">À changer</div>
+                    </div>
+
+                    <textarea placeholder="Note (optionnel)" style="width:100%; padding:8px; border:1px solid var(--gray-300); border-radius:6px; font-size:13px; resize:none; height:40px;"></textarea>
+
+                    <div class="wizard-buttons">
+                        <div class="btn btn-outline-mock">Précédent</div>
+                        <div class="btn btn-primary-mock">Suivant</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr class="sep">
+
+<!-- Écran 4 : Vue transversale -->
+<div class="section" style="background:white;">
+    <div class="container">
+        <div class="section-title">Écran 4</div>
+        <h2>Vue transversale</h2>
+        <p class="lead">Tableau de bord pour voir l'état d'un type d'item sur tous les appartements d'un coup.</p>
+
+        <div class="mockup-section">
+            <div class="mockup-header">
+                <div class="mockup-dot red"></div>
+                <div class="mockup-dot yellow"></div>
+                <div class="mockup-dot green"></div>
+                <span class="mockup-url">manager-my-casa.fr/inventory/overview</span>
+            </div>
+            <div class="mockup-body">
+                <table class="mock-table">
+                    <thead>
+                        <tr>
+                            <th>Catégorie</th>
+                            <th>Item</th>
+                            <th class="text-center">Total</th>
+                            <th class="text-center" style="color:var(--success)">OK</th>
+                            <th class="text-center" style="color:var(--primary)">Neuf</th>
+                            <th class="text-center" style="color:var(--danger)">À changer</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="text-muted">Cuisine</td>
+                            <td>Verres à eau</td>
+                            <td class="text-center">133</td>
+                            <td class="text-center text-success">95</td>
+                            <td class="text-center" style="color:var(--primary)">12</td>
+                            <td class="text-center text-danger">20</td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted">Électroménager</td>
+                            <td>Aspirateur</td>
+                            <td class="text-center">133</td>
+                            <td class="text-center text-success">100</td>
+                            <td class="text-center" style="color:var(--primary)">8</td>
+                            <td class="text-center text-danger">15</td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted">Literie</td>
+                            <td>Oreillers</td>
+                            <td class="text-center">133</td>
+                            <td class="text-center text-success">125</td>
+                            <td class="text-center" style="color:var(--primary)">3</td>
+                            <td class="text-center text-danger">5</td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted">Salle de Bain</td>
+                            <td>Brosse WC</td>
+                            <td class="text-center">133</td>
+                            <td class="text-center text-success">130</td>
+                            <td class="text-center" style="color:var(--primary)">1</td>
+                            <td class="text-center text-danger">2</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p style="font-size:12px; color:var(--gray-400); margin-top:12px;">Cliquez sur une ligne pour voir le détail par appartement.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr class="sep">
+
+<!-- Écran 5 : Rapport proprio -->
+<div class="section">
+    <div class="container">
+        <div class="section-title">Écran 5</div>
+        <h2>Rapport propriétaire</h2>
+        <p class="lead">Page web partageable — envoyez simplement le lien au proprio par WhatsApp. Pas de login requis.</p>
+
+        <div class="mockup-section">
+            <div class="mockup-header">
+                <div class="mockup-dot red"></div>
+                <div class="mockup-dot yellow"></div>
+                <div class="mockup-dot green"></div>
+                <span class="mockup-url">manager-my-casa.fr/inventory/report/47/a3f8e2...</span>
+            </div>
+            <div class="mockup-body" style="max-width:500px; margin:0 auto;">
+                <h4 style="font-size:18px;">BONAPARTE 11 — État du matériel</h4>
+                <p style="font-size:12px; color:var(--gray-400); margin-bottom:12px;">Dernière inspection : 28/05/2026</p>
+
+                <div style="display:flex; justify-content:space-between; font-size:14px;">
+                    <strong>Score global</strong>
+                    <span>87% en bon état</span>
+                </div>
+                <div class="score-bar"><div class="score-fill" style="width:87%"></div></div>
+
+                <div style="border:2px solid var(--danger); border-radius:8px; padding:12px; margin-bottom:20px;">
+                    <div style="color:var(--danger); font-weight:600; margin-bottom:8px;">4 items à remplacer</div>
+                    <div style="font-size:13px; color:var(--gray-600);">
+                        <div style="padding:4px 0; border-bottom:1px solid var(--gray-100);">Verres à eau — manquent 4 sur 8</div>
+                        <div style="padding:4px 0; border-bottom:1px solid var(--gray-100);">Grille-pain — usé</div>
+                        <div style="padding:4px 0; border-bottom:1px solid var(--gray-100);">Couette hiver — tachée</div>
+                        <div style="padding:4px 0;">Parasol — cassé</div>
+                    </div>
+                </div>
+
+                <div style="background:var(--gray-50); padding:12px; border-radius:8px; font-size:13px;">
+                    <strong>Items fournis par My Casa (non à votre charge) :</strong><br>
+                    <span style="color:var(--gray-500);">Kit bienvenue, torchons, serviettes de bain, tapis de bain, papier toilette, éponge, sacs poubelle, guide pratique, contact WhatsApp</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr class="sep">
+
+<!-- Comment ça marche -->
+<div class="section" style="background:white;">
+    <div class="container">
+        <div class="section-title">Mise en route</div>
+        <h2>Comment démarrer</h2>
+        <p class="lead">3 étapes simples pour être opérationnel.</p>
+
+        <div class="flow-steps">
+            <div class="flow-step">
+                <div class="flow-num">1</div>
+                <div>
+                    <h4>Configurer les appartements</h4>
+                    <p>Allez dans <strong>État des lieux → Configuration</strong> et renseignez le nombre de salles de bain et la présence d'un espace extérieur pour chaque appartement. Les quantités attendues se calculeront automatiquement.</p>
+                </div>
+            </div>
+            <div class="flow-step">
+                <div class="flow-num">2</div>
+                <div>
+                    <h4>Lancer les inspections</h4>
+                    <p>Ouvrez un appartement, cliquez sur <strong>"Inspection rapide"</strong> et parcourez les items. Photo + état + quantité pour chaque item. Commencez par vos appartements prioritaires.</p>
+                </div>
+            </div>
+            <div class="flow-step">
+                <div class="flow-num">3</div>
+                <div>
+                    <h4>Exploiter les données</h4>
+                    <p>La <strong>vue transversale</strong> et la <strong>liste d'achat</strong> se remplissent automatiquement. Partagez les <strong>rapports propriétaires</strong> via WhatsApp pour demander les remplacements.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<div class="footer">
+    <p>Module développé par Sylvain Caron — Développement Web & Marketing Analytique</p>
+    <p style="margin-top:4px;">manager-my-casa.fr</p>
+</div>
+
+</body>
+</html>
