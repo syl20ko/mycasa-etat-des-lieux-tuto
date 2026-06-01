@@ -842,7 +842,7 @@
 function checkPwd(){
     var h=0,s=document.getElementById('pwd').value;
     for(var i=0;i<s.length;i++){h=((h<<5)-h)+s.charCodeAt(i);h|=0;}
-    if(h===(-823081162)){
+    if(h===(412752858)){
         document.getElementById('gate').style.display='none';
         document.getElementById('content').style.display='block';
         sessionStorage.setItem('mc_auth','1');
